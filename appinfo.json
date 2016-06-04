@@ -1,0 +1,24 @@
+{
+    "appKeys": {},
+    "capabilities": [
+        ""
+    ],
+    "companyName": "jeffrey@vanbijleveld.nl",
+    "enableMultiJS": true,
+    "longName": "NOS:Teletekst",
+    "projectType": "native",
+    "resources": {
+        "media": []
+    },
+    "sdkVersion": "3",
+    "shortName": "NOS:Teletekst",
+    "targetPlatforms": [
+        "aplite",
+        "basalt"
+    ],
+    "uuid": "fdb3259c-7dce-4873-bbed-c9e5a42a01bf",
+    "versionLabel": "1.0",
+    "watchapp": {
+        "watchface": false
+    }
+}
