@@ -13,16 +13,16 @@
     "resources": {
         "media": [
             {
-                "file": "fonts/arial_9",
-                "name": "FONT_ARIAL_NORMAL_9",
+                "file": "fonts/arial_10",
+                "name": "FONT_ARIAL_NORMAL_10",
                 "targetPlatforms": null,
                 "type": "font"
             },
             {
-                "file": "fonts/arial",
-                "name": "FONT_ARIAL_NORMAL_8",
+                "file": "images/tt_header",
+                "name": "IMAGE_TT_HEADER",
                 "targetPlatforms": null,
-                "type": "font"
+                "type": "bitmap"
             }
         ]
     },

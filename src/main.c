@@ -10,65 +10,100 @@ static TextLayer *s_text_layer3;
 static TextLayer *s_text_layer4;
 static TextLayer *s_text_layer5;
 static TextLayer *s_text_layer6;
+static TextLayer *s_text_layer7;
+static TextLayer *s_text_layer8;
+static TextLayer *s_text_layer9;
+static BitmapLayer *s_tt_header_layer;
+static GBitmap *s_tt_header_bitmap;
 
 static int s_selectedLine;
 
 static void resetLines(){
-  text_layer_set_background_color(s_text_layer1, GColorBlack);
-  text_layer_set_text_color(s_text_layer1, GColorWhite);
+  GColor g_bg = GColorBlack;
+  GColor g_txt = GColorWhite;
   
-  text_layer_set_background_color(s_text_layer2, GColorBlack);
-  text_layer_set_text_color(s_text_layer2, GColorWhite);
+  text_layer_set_background_color(s_text_layer1, g_bg);
+  text_layer_set_text_color(s_text_layer1, g_txt);
+  
+  text_layer_set_background_color(s_text_layer2, g_bg);
+  text_layer_set_text_color(s_text_layer2, g_txt);
 
-  text_layer_set_background_color(s_text_layer3, GColorBlack);
-  text_layer_set_text_color(s_text_layer3, GColorWhite);
+  text_layer_set_background_color(s_text_layer3, g_bg);
+  text_layer_set_text_color(s_text_layer3, g_txt);
 
-  text_layer_set_background_color(s_text_layer4, GColorBlack);
-  text_layer_set_text_color(s_text_layer4, GColorWhite);
+  text_layer_set_background_color(s_text_layer4, g_bg);
+  text_layer_set_text_color(s_text_layer4, g_txt);
   
-  text_layer_set_background_color(s_text_layer5, GColorBlack);
-  text_layer_set_text_color(s_text_layer5, GColorWhite);
+  text_layer_set_background_color(s_text_layer5, g_bg);
+  text_layer_set_text_color(s_text_layer5, g_txt);
   
-  text_layer_set_background_color(s_text_layer6, GColorBlack);
-  text_layer_set_text_color(s_text_layer6, GColorWhite); 
+  text_layer_set_background_color(s_text_layer6, g_bg);
+  text_layer_set_text_color(s_text_layer6, g_txt); 
+  
+  text_layer_set_background_color(s_text_layer7, g_bg);
+  text_layer_set_text_color(s_text_layer7, g_txt);
+  
+  text_layer_set_background_color(s_text_layer8, g_bg);
+  text_layer_set_text_color(s_text_layer8, g_txt);
+  
+  text_layer_set_background_color(s_text_layer9, g_bg);
+  text_layer_set_text_color(s_text_layer9, g_txt); 
 }
 
 static void setSelectedLine(int lineNo){
+  GColor bg_sel = GColorWhite;
+  GColor txt_sel = GColorBlack;
+  
   resetLines();
   if(lineNo == 1){
-    text_layer_set_background_color(s_text_layer1, GColorWhite);
-    text_layer_set_text_color(s_text_layer1, GColorBlack);
+    text_layer_set_background_color(s_text_layer1, bg_sel);
+    text_layer_set_text_color(s_text_layer1, txt_sel);
   }
   if(lineNo == 2){
-    text_layer_set_background_color(s_text_layer2, GColorWhite);
-    text_layer_set_text_color(s_text_layer2, GColorBlack);
+    text_layer_set_background_color(s_text_layer2, bg_sel);
+    text_layer_set_text_color(s_text_layer2, txt_sel);
   }
   if(lineNo == 3){
-    text_layer_set_background_color(s_text_layer3, GColorWhite);
-    text_layer_set_text_color(s_text_layer3, GColorBlack);
+    text_layer_set_background_color(s_text_layer3, bg_sel);
+    text_layer_set_text_color(s_text_layer3, txt_sel);
   }
   if(lineNo == 4){
-    text_layer_set_background_color(s_text_layer4, GColorWhite);
-    text_layer_set_text_color(s_text_layer4, GColorBlack);
+    text_layer_set_background_color(s_text_layer4, bg_sel);
+    text_layer_set_text_color(s_text_layer4, txt_sel);
   }
   if(lineNo == 5){
-    text_layer_set_background_color(s_text_layer5, GColorWhite);
-    text_layer_set_text_color(s_text_layer5, GColorBlack);
+    text_layer_set_background_color(s_text_layer5, bg_sel);
+    text_layer_set_text_color(s_text_layer5, txt_sel);
   }
   if(lineNo == 6){
-    text_layer_set_background_color(s_text_layer6, GColorWhite);
-    text_layer_set_text_color(s_text_layer6, GColorBlack);
+    text_layer_set_background_color(s_text_layer6, bg_sel);
+    text_layer_set_text_color(s_text_layer6, txt_sel);
+  }
+  if(lineNo == 7){
+    text_layer_set_background_color(s_text_layer7, bg_sel);
+    text_layer_set_text_color(s_text_layer7, txt_sel);
+  }
+  if(lineNo == 8){
+    text_layer_set_background_color(s_text_layer8, bg_sel);
+    text_layer_set_text_color(s_text_layer8, txt_sel);
+  }
+  if(lineNo == 9){
+    text_layer_set_background_color(s_text_layer9, bg_sel);
+    text_layer_set_text_color(s_text_layer9, txt_sel);
   }
 }
 
 static void inbox_received_callback(DictionaryIterator *iterator, void *context) {
   static char data_buffer[512];
-  static char line1[256];
-  static char line2[256];
-  static char line3[256];
-  static char line4[256];
-  static char line5[256];
-  static char line6[256];
+  static char line1[64];
+  static char line2[64];
+  static char line3[64];
+  static char line4[64];
+  static char line5[64];
+  static char line6[64];
+  static char line7[64];
+  static char line8[64];
+  static char line9[64];
 
   Tuple *data_tuple = dict_find(iterator, KEY_DATA);
   //Tuple *links_tuple = dict_find(iterator, KEY_LINKS);
@@ -94,9 +129,18 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
     
     strncpy(line6, data_buffer+(5*36), 35);
     text_layer_set_text(s_text_layer6, line6);
+    
+    strncpy(line7, data_buffer+(6*36), 35);
+    text_layer_set_text(s_text_layer7, line7);
+    
+    strncpy(line8, data_buffer+(7*36), 35);
+    text_layer_set_text(s_text_layer8, line8);
+    
+    strncpy(line9, data_buffer+(8*36), 35);
+    text_layer_set_text(s_text_layer9, line9);
    }
-  s_selectedLine = 3;
-  setSelectedLine(3);
+  //s_selectedLine = 3;
+  //setSelectedLine(3);
 }
 
 static void inbox_dropped_callback(AppMessageResult reason, void *context) {
@@ -134,40 +178,67 @@ void config_provider(Window *window) {
 
 static void main_window_load(Window *window){
   static GFont s_tt_font;
+  GColor g_def_bg = GColorBlack;
+  GColor g_def_txt = GColorWhite;
   
-  s_tt_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ARIAL_NORMAL_9));
-  
+  s_tt_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ARIAL_NORMAL_10));
   Layer *window_layer = window_get_root_layer(window);
-  
-  //window_set_background_color(*window_layer, GColorBlack);
   GRect bounds = layer_get_bounds(window_layer);
+  
+  s_tt_header_layer = bitmap_layer_create(GRect(0, 0, bounds.size.w, 25));
+  s_tt_header_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_TT_HEADER);
+  bitmap_layer_set_bitmap(s_tt_header_layer, s_tt_header_bitmap);
+  layer_add_child(window_get_root_layer(window), bitmap_layer_get_layer(s_tt_header_layer));
    
-  s_text_layer1 = text_layer_create(GRect(5, 20, (bounds.size.w-6), 15));
-  s_text_layer2 = text_layer_create(GRect(5, 35, (bounds.size.w-6), 15));
-  s_text_layer3 = text_layer_create(GRect(5, 50, (bounds.size.w-6), 15));
+  s_text_layer1 = text_layer_create(GRect(5, 25, (bounds.size.w-6), 15));
+  s_text_layer2 = text_layer_create(GRect(5, 40, (bounds.size.w-6), 15));
+  s_text_layer3 = text_layer_create(GRect(5, 55, (bounds.size.w-6), 15));
+  s_text_layer4 = text_layer_create(GRect(5, 70, (bounds.size.w-6), 15));
+  s_text_layer5 = text_layer_create(GRect(5, 85, (bounds.size.w-6), 15));
+  s_text_layer6 = text_layer_create(GRect(5, 100, (bounds.size.w-6), 15));
+  s_text_layer7 = text_layer_create(GRect(5, 115, (bounds.size.w-6), 15));
+  s_text_layer8 = text_layer_create(GRect(5, 130, (bounds.size.w-6), 15));
+  s_text_layer9 = text_layer_create(GRect(5, 145, (bounds.size.w-6), 15));
 
-  s_text_layer4 = text_layer_create(GRect(5, 65, (bounds.size.w-6), 15));
-  s_text_layer5 = text_layer_create(GRect(5, 80, (bounds.size.w-6), 15));
-  s_text_layer6 = text_layer_create(GRect(5, 95, (bounds.size.w-6), 15));
-
+  text_layer_set_background_color(s_text_layer1, g_def_bg);
+  text_layer_set_text_color(s_text_layer1, g_def_txt);
+  text_layer_set_background_color(s_text_layer2, g_def_bg);
+  text_layer_set_text_color(s_text_layer2, g_def_txt);
+  text_layer_set_background_color(s_text_layer3, g_def_bg);
+  text_layer_set_text_color(s_text_layer3, g_def_txt);
+  text_layer_set_background_color(s_text_layer4, g_def_bg);
+  text_layer_set_text_color(s_text_layer4, g_def_txt);
+  text_layer_set_background_color(s_text_layer5, g_def_bg);
+  text_layer_set_text_color(s_text_layer5, g_def_txt);
+  text_layer_set_background_color(s_text_layer6, g_def_bg);
+  text_layer_set_text_color(s_text_layer6, g_def_txt);
+  text_layer_set_background_color(s_text_layer7, g_def_bg);
+  text_layer_set_text_color(s_text_layer7, g_def_txt);
+  text_layer_set_background_color(s_text_layer8, g_def_bg);
+  text_layer_set_text_color(s_text_layer8, g_def_txt);
+  text_layer_set_background_color(s_text_layer9, g_def_bg);
+  text_layer_set_text_color(s_text_layer9, g_def_txt);
+  
   text_layer_set_font(s_text_layer1, s_tt_font);
   text_layer_set_font(s_text_layer2, s_tt_font);
   text_layer_set_font(s_text_layer3, s_tt_font);
   text_layer_set_font(s_text_layer4, s_tt_font);
   text_layer_set_font(s_text_layer5, s_tt_font);
   text_layer_set_font(s_text_layer6, s_tt_font);
+  text_layer_set_font(s_text_layer7, s_tt_font);
+  text_layer_set_font(s_text_layer8, s_tt_font);
+  text_layer_set_font(s_text_layer9, s_tt_font);
   
-  //text_layer_set_background_color(s_text_layer, GColorBlack);
-  //text_layer_set_text_color(s_text_layer, GColorWhite);
-  //text_layer_set_font(s_text_layer, s_tt_font);
-  text_layer_set_text(s_text_layer1, "loading..");
   layer_add_child(window_get_root_layer(window), text_layer_get_layer(s_text_layer1));
   layer_add_child(window_get_root_layer(window), text_layer_get_layer(s_text_layer2));
   layer_add_child(window_get_root_layer(window), text_layer_get_layer(s_text_layer3));
   layer_add_child(window_get_root_layer(window), text_layer_get_layer(s_text_layer4));
   layer_add_child(window_get_root_layer(window), text_layer_get_layer(s_text_layer5));
   layer_add_child(window_get_root_layer(window), text_layer_get_layer(s_text_layer6));
-  
+  layer_add_child(window_get_root_layer(window), text_layer_get_layer(s_text_layer7));
+  layer_add_child(window_get_root_layer(window), text_layer_get_layer(s_text_layer8));
+  layer_add_child(window_get_root_layer(window), text_layer_get_layer(s_text_layer9));
+
 }
 
 static void main_window_unload(Window *window){
@@ -177,8 +248,12 @@ static void main_window_unload(Window *window){
   text_layer_destroy(s_text_layer4);
   text_layer_destroy(s_text_layer5);
   text_layer_destroy(s_text_layer6);
+  text_layer_destroy(s_text_layer7);
+  text_layer_destroy(s_text_layer8);
+  text_layer_destroy(s_text_layer9);
+  gbitmap_destroy(s_tt_header_bitmap);
+  bitmap_layer_destroy(s_tt_header_layer);
 }
-
 
 static void init(){
   s_main_window = window_create();
