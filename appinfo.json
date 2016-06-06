@@ -1,5 +1,8 @@
 {
-    "appKeys": {},
+    "appKeys": {
+        "KEY_TT_DATA": 0,
+        "KEY_TT_LINKS": 1
+    },
     "capabilities": [
         ""
     ],
@@ -8,7 +11,20 @@
     "longName": "NOS:Teletekst",
     "projectType": "native",
     "resources": {
-        "media": []
+        "media": [
+            {
+                "file": "fonts/arial_9",
+                "name": "FONT_ARIAL_NORMAL_9",
+                "targetPlatforms": null,
+                "type": "font"
+            },
+            {
+                "file": "fonts/arial",
+                "name": "FONT_ARIAL_NORMAL_8",
+                "targetPlatforms": null,
+                "type": "font"
+            }
+        ]
     },
     "sdkVersion": "3",
     "shortName": "NOS:Teletekst",
