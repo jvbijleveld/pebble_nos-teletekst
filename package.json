@@ -1,0 +1,45 @@
+{
+    "author": "jeffrey@vanbijleveld.nl",
+    "dependencies": {},
+    "keywords": [],
+    "name": "nos-teletekst",
+    "pebble": {
+        "capabilities": [
+            ""
+        ],
+        "displayName": "NOS:Teletekst",
+        "enableMultiJS": true,
+        "messageKeys": {
+            "KEY_PAGE": 2,
+            "KEY_TT_DATA": 0,
+            "KEY_TT_LINKS": 1
+        },
+        "projectType": "native",
+        "resources": {
+            "media": [
+                {
+                    "file": "fonts/arial_10",
+                    "name": "FONT_ARIAL_NORMAL_10",
+                    "targetPlatforms": null,
+                    "type": "font"
+                },
+                {
+                    "file": "images/tt_header",
+                    "name": "IMAGE_TT_HEADER",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                }
+            ]
+        },
+        "sdkVersion": "3",
+        "targetPlatforms": [
+            "aplite",
+            "basalt"
+        ],
+        "uuid": "fdb3259c-7dce-4873-bbed-c9e5a42a01bf",
+        "watchapp": {
+            "watchface": false
+        }
+    },
+    "version": "1.0.0"
+}

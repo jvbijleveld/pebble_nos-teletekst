@@ -1,7 +1,9 @@
 #include <pebble.h>
+#include <functions.h>
 
 #define KEY_DATA 0
 #define KEY_LINKS 1
+#define KEY_PAGE 2
 
 static Window *s_main_window;
 static TextLayer *s_text_layer1;
@@ -17,6 +19,7 @@ static BitmapLayer *s_tt_header_layer;
 static GBitmap *s_tt_header_bitmap;
 
 static int s_selectedLine;
+static char *link_array[9] = {};
 
 static void resetLines(){
   GColor g_bg = GColorBlack;
@@ -93,8 +96,22 @@ static void setSelectedLine(int lineNo){
   }
 }
 
-static void inbox_received_callback(DictionaryIterator *iterator, void *context) {
-  static char data_buffer[512];
+static void getPage(char *pageNo){
+  DictionaryIterator *out_iter;
+
+  AppMessageResult result = app_message_outbox_begin(&out_iter);
+  if(result == APP_MSG_OK) {
+    dict_write_cstring(out_iter, KEY_PAGE, pageNo);
+    result = app_message_outbox_send();
+    if(result != APP_MSG_OK) {
+      APP_LOG(APP_LOG_LEVEL_ERROR, "Error sending the outbox: %d", (int)result);
+    }
+  } else {
+    APP_LOG(APP_LOG_LEVEL_ERROR, "Error preparing the outbox: %d", (int)result);
+  }
+}
+
+void builIndexPage(char *data_buffer){
   static char line1[64];
   static char line2[64];
   static char line3[64];
@@ -104,43 +121,72 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
   static char line7[64];
   static char line8[64];
   static char line9[64];
+  
+//  APP_LOG(APP_LOG_LEVEL_INFO, data_buffer);
+  
+  strncpy(line1, data_buffer, 35);
+  text_layer_set_text(s_text_layer1, line1);
+  strncpy(line2, data_buffer+36, 35);
+  text_layer_set_text(s_text_layer2, line2);
+  strncpy(line3, data_buffer+(2*36), 35);
+  text_layer_set_text(s_text_layer3, line3);
+  strncpy(line4, data_buffer+(3*36), 35);
+  text_layer_set_text(s_text_layer4, line4);
+  strncpy(line5, data_buffer+(4*36), 35);
+  text_layer_set_text(s_text_layer5, line5);
+  strncpy(line6, data_buffer+(5*36), 35);
+  text_layer_set_text(s_text_layer6, line6);
+  strncpy(line7, data_buffer+(6*36), 35);
+  text_layer_set_text(s_text_layer7, line7);
+  strncpy(line8, data_buffer+(7*36), 35);
+  text_layer_set_text(s_text_layer8, line8);
+  strncpy(line9, data_buffer+(8*36), 35);
+  text_layer_set_text(s_text_layer9, line9);
+}
+
+
+static void inbox_received_callback(DictionaryIterator *iterator, void *context) {
+  static char data_buffer[512];
+  static char link_buffer[64];
+  int i;
+ // int y = 0;
+  char *buf = "";
+  
+  APP_LOG(APP_LOG_LEVEL_INFO, "inbox_received_callback");
 
   Tuple *data_tuple = dict_find(iterator, KEY_DATA);
-  //Tuple *links_tuple = dict_find(iterator, KEY_LINKS);
+  Tuple *links_tuple = dict_find(iterator, KEY_LINKS);
+  
+  if(links_tuple){
+    snprintf(link_buffer, sizeof(link_buffer), "%s", links_tuple->value->cstring);
+    APP_LOG(APP_LOG_LEVEL_INFO, "buffer %s", link_buffer);
+    
+    for(i=0;i<9;i++){
+      strncpy(buf, link_buffer + ((i*1)+3), 3);
+      APP_LOG(APP_LOG_LEVEL_INFO, "link %s", buf);
+      link_array[i] = buf;
+    }
+    
+    /*
+     
+      for(i = 0; i < (int)strlen(link_buffer);i++){
+      
+        if(strncmp(",", &link_buffer[i],1)) {
+          APP_LOG(APP_LOG_LEVEL_INFO, "single %s", &link_buffer[i]);
+        }else{
+           APP_LOG(APP_LOG_LEVEL_INFO, "!single %s", &link_buffer[i]);
+        }
+      }
+      */
+    //char *link_array = strtok(link_buffer,"|");
+    
+     APP_LOG(APP_LOG_LEVEL_INFO, "value %s", link_array[4]);
+  }
   
   if(data_tuple) {    
     snprintf(data_buffer, sizeof(data_buffer), "%s", data_tuple->value->cstring);
-    
-  //  APP_LOG(APP_LOG_LEVEL_INFO, data_buffer);
-    strncpy(line1, data_buffer, 35);
-    text_layer_set_text(s_text_layer1, line1);
-    
-    strncpy(line2, data_buffer+36, 35);
-    text_layer_set_text(s_text_layer2, line2);
-    
-    strncpy(line3, data_buffer+(2*36), 35);
-    text_layer_set_text(s_text_layer3, line3);
-    
-    strncpy(line4, data_buffer+(3*36), 35);
-    text_layer_set_text(s_text_layer4, line4);
-    
-    strncpy(line5, data_buffer+(4*36), 35);
-    text_layer_set_text(s_text_layer5, line5);
-    
-    strncpy(line6, data_buffer+(5*36), 35);
-    text_layer_set_text(s_text_layer6, line6);
-    
-    strncpy(line7, data_buffer+(6*36), 35);
-    text_layer_set_text(s_text_layer7, line7);
-    
-    strncpy(line8, data_buffer+(7*36), 35);
-    text_layer_set_text(s_text_layer8, line8);
-    
-    strncpy(line9, data_buffer+(8*36), 35);
-    text_layer_set_text(s_text_layer9, line9);
+    builIndexPage(data_buffer);
    }
-  //s_selectedLine = 3;
-  //setSelectedLine(3);
 }
 
 static void inbox_dropped_callback(AppMessageResult reason, void *context) {
@@ -170,10 +216,17 @@ void down_single_click_handler(ClickRecognizerRef recognizer, void *context) {
   }
   setSelectedLine((int) s_selectedLine);
 }
+
+void select_single_click_handler(ClickRecognizerRef recognizer, void *context) {
+  //APP_LOG(APP_LOG_LEVEL_INFO, link_array[5]);
+  //getPage(link_array[(int)(s_selectedLine-1)]);
+  //getPage(link_array[5]);
+}
   
 void config_provider(Window *window) {
   window_single_click_subscribe(BUTTON_ID_UP, up_single_click_handler);
   window_single_click_subscribe(BUTTON_ID_DOWN, down_single_click_handler);
+  window_single_click_subscribe(BUTTON_ID_SELECT, select_single_click_handler);
 }
 
 static void main_window_load(Window *window){
@@ -272,8 +325,8 @@ static void init(){
   
   window_set_click_config_provider(s_main_window, (ClickConfigProvider) config_provider);
    
-  const int inbox_size = 512;
-  const int outbox_size = 32;
+  const int inbox_size = 1024;
+  const int outbox_size = 8;
   app_message_open(inbox_size, outbox_size);
 }
 
