@@ -108,6 +108,7 @@ static void setSelectedLine(int lineNo){
 
 static void getPage(char *pageNo){
   DictionaryIterator *out_iter;
+  APP_LOG(APP_LOG_LEVEL_INFO,"getPage got %s", pageNo);
 
   AppMessageResult result = app_message_outbox_begin(&out_iter);
   if(result == APP_MSG_OK) {
@@ -131,8 +132,6 @@ void builIndexPage(char *data_buffer){
   static char line7[64];
   static char line8[64];
   static char line9[64];
-  
-//  APP_LOG(APP_LOG_LEVEL_INFO, data_buffer);
   
   strncpy(line1, data_buffer, 35);
   text_layer_set_text(s_text_layer1, line1);
@@ -158,8 +157,6 @@ void builIndexPage(char *data_buffer){
 static void inbox_received_callback(DictionaryIterator *iterator, void *context) {
   static char data_buffer[512];
   static char link_buffer[64];
-  int i;
-  char buf[4];
   
   APP_LOG(APP_LOG_LEVEL_INFO, "inbox_received_callback");
 
@@ -186,18 +183,7 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
     link_array[3] = link4;
     link_array[4] = link5;
     
-    APP_LOG(APP_LOG_LEVEL_INFO, "inbox::received link4  %s", link_array[3]);
-    
-    /*
-    for(i=0;i<9;i++){
-      strncpy(buf, link_buffer + (i*4), 3);
-      
-      buf[3] = (char)0;
-      APP_LOG(APP_LOG_LEVEL_INFO, "buf %s", buf);
-      //strcpy(link_array[i][0], buf);
-      link_array[i] = buf;
-      APP_LOG(APP_LOG_LEVEL_INFO, "inbox::received index 0 %s", link_array[0]);
-    }*/
+    //APP_LOG(APP_LOG_LEVEL_INFO, "inbox::received link4  %s", link_array[3]);
   }
   
   if(data_tuple) {    
@@ -235,12 +221,11 @@ void down_single_click_handler(ClickRecognizerRef recognizer, void *context) {
 }
 
 void select_single_click_handler(ClickRecognizerRef recognizer, void *context) {
-  APP_LOG(APP_LOG_LEVEL_INFO, "testvalue %s", link_array[0]);
-  APP_LOG(APP_LOG_LEVEL_INFO, "selected line %i", s_selectedLine);
-  APP_LOG(APP_LOG_LEVEL_INFO, "fetching page %s", link_array[(int)(s_selectedLine-1)]);
+  //APP_LOG(APP_LOG_LEVEL_INFO, "testvalue %s", link_array[0]);
+  //APP_LOG(APP_LOG_LEVEL_INFO, "selected line %i", s_selectedLine);
+  //APP_LOG(APP_LOG_LEVEL_INFO, "fetching page %s", link_array[(int)(s_selectedLine-1)]);
   
   getPage(link_array[(int)(s_selectedLine-1)]);
-  //getPage(link_array[5]);
 }
   
 void config_provider(Window *window) {
@@ -346,7 +331,7 @@ static void init(){
   window_set_click_config_provider(s_main_window, (ClickConfigProvider) config_provider);
    
   const int inbox_size = 1024;
-  const int outbox_size = 8;
+  const int outbox_size = 32;
   app_message_open(inbox_size, outbox_size);
 }
 

@@ -83,8 +83,8 @@ Pebble.addEventListener('ready',
 // Listen for when an AppMessage is received
 Pebble.addEventListener('appmessage',
   function(e) {
-    var dict = e.payload;
-    console.log("AppMessage received: " + dict[2]);
+   var dict = e.payload;
+    console.log('Got message: ' + JSON.stringify(dict));
     console.log("Going for page: " + dict[2]);
     getPage(dict[2]);
   }                     
