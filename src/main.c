@@ -19,7 +19,17 @@ static BitmapLayer *s_tt_header_layer;
 static GBitmap *s_tt_header_bitmap;
 
 static int s_selectedLine;
-static char *link_array[9] = {};
+char *link_array[9];
+static char link1[4];
+static char link2[4];
+static char link3[4];
+static char link4[4];
+static char link5[4];
+static char link6[4];
+static char link7[4];
+static char link8[4];
+static char link9[4];
+
 
 static void resetLines(){
   GColor g_bg = GColorBlack;
@@ -149,8 +159,7 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
   static char data_buffer[512];
   static char link_buffer[64];
   int i;
- // int y = 0;
-  char *buf = "";
+  char buf[4];
   
   APP_LOG(APP_LOG_LEVEL_INFO, "inbox_received_callback");
 
@@ -161,26 +170,34 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
     snprintf(link_buffer, sizeof(link_buffer), "%s", links_tuple->value->cstring);
     APP_LOG(APP_LOG_LEVEL_INFO, "buffer %s", link_buffer);
     
-    for(i=0;i<9;i++){
-      strncpy(buf, link_buffer + ((i*1)+3), 3);
-      APP_LOG(APP_LOG_LEVEL_INFO, "link %s", buf);
-      link_array[i] = buf;
-    }
+    strncpy(link1, link_buffer, 3);
+    strncpy(link2, link_buffer + (1*4), 3);
+    strncpy(link3, link_buffer + (2*4), 3);
+    strncpy(link4, link_buffer + (3*4), 3);
+    strncpy(link5, link_buffer + (4*4), 3);
+    strncpy(link6, link_buffer + (5*4), 3);
+    strncpy(link7, link_buffer + (6*4), 3);
+    strncpy(link8, link_buffer + (7*4), 3);
+    strncpy(link9, link_buffer + (8*4), 3);
+    
+    link_array[0] = link1;
+    link_array[1] = link2;
+    link_array[2] = link3;
+    link_array[3] = link4;
+    link_array[4] = link5;
+    
+    APP_LOG(APP_LOG_LEVEL_INFO, "inbox::received link4  %s", link_array[3]);
     
     /*
-     
-      for(i = 0; i < (int)strlen(link_buffer);i++){
+    for(i=0;i<9;i++){
+      strncpy(buf, link_buffer + (i*4), 3);
       
-        if(strncmp(",", &link_buffer[i],1)) {
-          APP_LOG(APP_LOG_LEVEL_INFO, "single %s", &link_buffer[i]);
-        }else{
-           APP_LOG(APP_LOG_LEVEL_INFO, "!single %s", &link_buffer[i]);
-        }
-      }
-      */
-    //char *link_array = strtok(link_buffer,"|");
-    
-     APP_LOG(APP_LOG_LEVEL_INFO, "value %s", link_array[4]);
+      buf[3] = (char)0;
+      APP_LOG(APP_LOG_LEVEL_INFO, "buf %s", buf);
+      //strcpy(link_array[i][0], buf);
+      link_array[i] = buf;
+      APP_LOG(APP_LOG_LEVEL_INFO, "inbox::received index 0 %s", link_array[0]);
+    }*/
   }
   
   if(data_tuple) {    
@@ -218,8 +235,11 @@ void down_single_click_handler(ClickRecognizerRef recognizer, void *context) {
 }
 
 void select_single_click_handler(ClickRecognizerRef recognizer, void *context) {
-  //APP_LOG(APP_LOG_LEVEL_INFO, link_array[5]);
-  //getPage(link_array[(int)(s_selectedLine-1)]);
+  APP_LOG(APP_LOG_LEVEL_INFO, "testvalue %s", link_array[0]);
+  APP_LOG(APP_LOG_LEVEL_INFO, "selected line %i", s_selectedLine);
+  APP_LOG(APP_LOG_LEVEL_INFO, "fetching page %s", link_array[(int)(s_selectedLine-1)]);
+  
+  getPage(link_array[(int)(s_selectedLine-1)]);
   //getPage(link_array[5]);
 }
   
