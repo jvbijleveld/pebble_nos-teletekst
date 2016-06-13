@@ -15,6 +15,7 @@ static TextLayer *s_text_layer6;
 static TextLayer *s_text_layer7;
 static TextLayer *s_text_layer8;
 static TextLayer *s_text_layer9;
+static TextLayer *s_text_layer_detail;
 static BitmapLayer *s_tt_header_layer;
 static GBitmap *s_tt_header_bitmap;
 
@@ -153,6 +154,10 @@ void builIndexPage(char *data_buffer){
   text_layer_set_text(s_text_layer9, line9);
 }
 
+void buildDetailPage(char *data){
+  text_layer_set_text(s_text_layer_detail, data);
+  layer_set_hidden((Layer *)s_text_layer_detail, false);
+}
 
 static void inbox_received_callback(DictionaryIterator *iterator, void *context) {
   static char data_buffer[512];
@@ -183,13 +188,14 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
     link_array[3] = link4;
     link_array[4] = link5;
     
-    //APP_LOG(APP_LOG_LEVEL_INFO, "inbox::received link4  %s", link_array[3]);
+    if(data_tuple) {    
+      snprintf(data_buffer, sizeof(data_buffer), "%s", data_tuple->value->cstring);
+      builIndexPage(data_buffer);
+     }
+  }else{
+    buildDetailPage(data_buffer);
   }
-  
-  if(data_tuple) {    
-    snprintf(data_buffer, sizeof(data_buffer), "%s", data_tuple->value->cstring);
-    builIndexPage(data_buffer);
-   }
+   
 }
 
 static void inbox_dropped_callback(AppMessageResult reason, void *context) {
@@ -205,7 +211,9 @@ static void outbox_sent_callback(DictionaryIterator *iterator, void *context) {
 }
 
 void up_single_click_handler(ClickRecognizerRef recognizer, void *context) {
+  layer_set_hidden((Layer *)s_text_layer_detail, true);
   s_selectedLine--;
+  
   if(s_selectedLine < 1){
     s_selectedLine = 9;
   }
@@ -213,6 +221,7 @@ void up_single_click_handler(ClickRecognizerRef recognizer, void *context) {
 }
 
 void down_single_click_handler(ClickRecognizerRef recognizer, void *context) {
+  layer_set_hidden((Layer *)s_text_layer_detail, true);
   s_selectedLine++;
   if(s_selectedLine > 9){
     s_selectedLine = 1;
@@ -221,10 +230,6 @@ void down_single_click_handler(ClickRecognizerRef recognizer, void *context) {
 }
 
 void select_single_click_handler(ClickRecognizerRef recognizer, void *context) {
-  //APP_LOG(APP_LOG_LEVEL_INFO, "testvalue %s", link_array[0]);
-  //APP_LOG(APP_LOG_LEVEL_INFO, "selected line %i", s_selectedLine);
-  //APP_LOG(APP_LOG_LEVEL_INFO, "fetching page %s", link_array[(int)(s_selectedLine-1)]);
-  
   getPage(link_array[(int)(s_selectedLine-1)]);
 }
   
@@ -257,6 +262,8 @@ static void main_window_load(Window *window){
   s_text_layer7 = text_layer_create(GRect(5, 115, (bounds.size.w-6), 15));
   s_text_layer8 = text_layer_create(GRect(5, 130, (bounds.size.w-6), 15));
   s_text_layer9 = text_layer_create(GRect(5, 145, (bounds.size.w-6), 15));
+  s_text_layer_detail = text_layer_create(GRect(5, 25, (bounds.size.w-6), (bounds.size.h-10)));
+
 
   text_layer_set_background_color(s_text_layer1, g_def_bg);
   text_layer_set_text_color(s_text_layer1, g_def_txt);
@@ -276,6 +283,8 @@ static void main_window_load(Window *window){
   text_layer_set_text_color(s_text_layer8, g_def_txt);
   text_layer_set_background_color(s_text_layer9, g_def_bg);
   text_layer_set_text_color(s_text_layer9, g_def_txt);
+  text_layer_set_background_color(s_text_layer_detail, g_def_bg);
+  text_layer_set_text_color(s_text_layer_detail, g_def_txt);
   
   text_layer_set_font(s_text_layer1, s_tt_font);
   text_layer_set_font(s_text_layer2, s_tt_font);
@@ -286,6 +295,7 @@ static void main_window_load(Window *window){
   text_layer_set_font(s_text_layer7, s_tt_font);
   text_layer_set_font(s_text_layer8, s_tt_font);
   text_layer_set_font(s_text_layer9, s_tt_font);
+  text_layer_set_font(s_text_layer_detail, s_tt_font);
   
   layer_add_child(window_get_root_layer(window), text_layer_get_layer(s_text_layer1));
   layer_add_child(window_get_root_layer(window), text_layer_get_layer(s_text_layer2));
@@ -296,7 +306,8 @@ static void main_window_load(Window *window){
   layer_add_child(window_get_root_layer(window), text_layer_get_layer(s_text_layer7));
   layer_add_child(window_get_root_layer(window), text_layer_get_layer(s_text_layer8));
   layer_add_child(window_get_root_layer(window), text_layer_get_layer(s_text_layer9));
-
+  
+  layer_set_hidden((Layer *)s_text_layer_detail, true);
 }
 
 static void main_window_unload(Window *window){
@@ -309,6 +320,7 @@ static void main_window_unload(Window *window){
   text_layer_destroy(s_text_layer7);
   text_layer_destroy(s_text_layer8);
   text_layer_destroy(s_text_layer9);
+  text_layer_destroy(s_text_layer_detail);
   gbitmap_destroy(s_tt_header_bitmap);
   bitmap_layer_destroy(s_tt_header_layer);
 }
