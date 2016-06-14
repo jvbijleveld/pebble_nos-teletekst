@@ -18,6 +18,13 @@
         "resources": {
             "media": [
                 {
+                    "file": "images/tt_icon",
+                    "menuIcon": true,
+                    "name": "IMAGE_TT_ICON",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
                     "file": "fonts/arial_10",
                     "name": "FONT_ARIAL_NORMAL_10",
                     "targetPlatforms": null,
