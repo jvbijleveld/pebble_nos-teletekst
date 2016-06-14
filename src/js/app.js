@@ -13,31 +13,29 @@ function parsePageData(data){
   var contentArr = data.content.split(contentSplit);
   var textData = '';
   var linkData = '';
-  var y;
+//  var y;
   var raw;
-  var e;
+ // var e;
+  
+  var regex = /(<([^>]+)>)/ig;
   
   console.log('Andd now: the news...' + contentArr.length);
   for (var i = 1; i < contentArr.length; i++) { //first index contains markup
-    raw = contentArr[i];
-    //clean additinal HTML from line
-    y = raw.indexOf('>') +1;
-    if( y > 35){
-      y = 0;
-    }
-    raw = raw.replace("</a>","");
+    raw = contentArr[i].replace(regex, "");
+   
     raw = HtmlDecode(raw);
-    e = raw.indexOf('<');
     
-    //console.log(raw);
-    textData = textData + raw.substr(y,(e-y)) + "|";
-    linkData = linkData + findLinkInLine(contentArr[i]) + ",";
+    console.log("raw:" + raw);
+    textData = textData + raw.substr(0,35) + " ";
+    if(i<9){
+      linkData = linkData + findLinkInLine(contentArr[i]);
+    }
   }
   sendToPebble(textData,linkData);
 }
 
 function sendToPebble(ttData, linksData){
-  console.log(linksData);
+  //console.log(ttData);
   var dictionary = {
     "KEY_TT_DATA": ttData,
     "KEY_TT_LINKS": linksData
@@ -55,10 +53,11 @@ function sendToPebble(ttData, linksData){
 
 function findLinkInLine(line){
   var strpos = line.indexOf('href=');
-  if(strpos){
-    return line.substr(strpos+7,3);
+  //console.log('strpos: ' + strpos + ' in line: '+ line);
+  if(strpos >= 0){
+    return line.substr(strpos+7,3) + ",";
   }else{
-    return false;
+    return "";
   }
 }
 

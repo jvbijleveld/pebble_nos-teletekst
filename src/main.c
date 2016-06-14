@@ -21,16 +21,6 @@ static GBitmap *s_tt_header_bitmap;
 
 static int s_selectedLine;
 char *link_array[9];
-static char link1[4];
-static char link2[4];
-static char link3[4];
-static char link4[4];
-static char link5[4];
-static char link6[4];
-static char link7[4];
-static char link8[4];
-static char link9[4];
-
 
 static void resetLines(){
   GColor g_bg = GColorBlack;
@@ -109,7 +99,7 @@ static void setSelectedLine(int lineNo){
 
 static void getPage(char *pageNo){
   DictionaryIterator *out_iter;
-  APP_LOG(APP_LOG_LEVEL_INFO,"getPage got %s", pageNo);
+  APP_LOG(APP_LOG_LEVEL_DEBUG,"getPage got %s", pageNo);
 
   AppMessageResult result = app_message_outbox_begin(&out_iter);
   if(result == APP_MSG_OK) {
@@ -134,6 +124,8 @@ void builIndexPage(char *data_buffer){
   static char line8[64];
   static char line9[64];
   
+  layer_set_hidden((Layer *)s_text_layer_detail, true);
+  
   strncpy(line1, data_buffer, 35);
   text_layer_set_text(s_text_layer1, line1);
   strncpy(line2, data_buffer+36, 35);
@@ -155,47 +147,60 @@ void builIndexPage(char *data_buffer){
 }
 
 void buildDetailPage(char *data){
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "buildDetailPage: %s", data);
   text_layer_set_text(s_text_layer_detail, data);
   layer_set_hidden((Layer *)s_text_layer_detail, false);
 }
 
 static void inbox_received_callback(DictionaryIterator *iterator, void *context) {
-  static char data_buffer[512];
+  static char data_buffer[1024];
   static char link_buffer[64];
   
-  APP_LOG(APP_LOG_LEVEL_INFO, "inbox_received_callback");
+  static char link1[4];
+  static char link2[4];
+  static char link3[4];
+  static char link4[4];
+  static char link5[4];
+  static char link6[4];
+  static char link7[4];
+  static char link8[4];
+  static char link9[4];
 
+  APP_LOG(APP_LOG_LEVEL_INFO, "inbox_received_callback");
   Tuple *data_tuple = dict_find(iterator, KEY_DATA);
   Tuple *links_tuple = dict_find(iterator, KEY_LINKS);
+  //APP_LOG(APP_LOG_LEVEL_DEBUG, "links_tuple %s", links_tuple->value->cstring);
   
   if(links_tuple){
     snprintf(link_buffer, sizeof(link_buffer), "%s", links_tuple->value->cstring);
-    APP_LOG(APP_LOG_LEVEL_INFO, "buffer %s", link_buffer);
-    
-    strncpy(link1, link_buffer, 3);
-    strncpy(link2, link_buffer + (1*4), 3);
-    strncpy(link3, link_buffer + (2*4), 3);
-    strncpy(link4, link_buffer + (3*4), 3);
-    strncpy(link5, link_buffer + (4*4), 3);
-    strncpy(link6, link_buffer + (5*4), 3);
-    strncpy(link7, link_buffer + (6*4), 3);
-    strncpy(link8, link_buffer + (7*4), 3);
-    strncpy(link9, link_buffer + (8*4), 3);
-    
-    link_array[0] = link1;
-    link_array[1] = link2;
-    link_array[2] = link3;
-    link_array[3] = link4;
-    link_array[4] = link5;
-    
-    if(data_tuple) {    
-      snprintf(data_buffer, sizeof(data_buffer), "%s", data_tuple->value->cstring);
-      builIndexPage(data_buffer);
-     }
-  }else{
-    buildDetailPage(data_buffer);
   }
-   
+  if(data_tuple) {    
+    snprintf(data_buffer, sizeof(data_buffer), "%s", data_tuple->value->cstring);
+  }
+  
+  if(strlen(link_buffer)> 1){
+      //APP_LOG(APP_LOG_LEVEL_DEBUG, "buffer %s", link_buffer);
+      
+      strncpy(link1, link_buffer, 3);
+      strncpy(link2, link_buffer + (1*4), 3);
+      strncpy(link3, link_buffer + (2*4), 3);
+      strncpy(link4, link_buffer + (3*4), 3);
+      strncpy(link5, link_buffer + (4*4), 3);
+      strncpy(link6, link_buffer + (5*4), 3);
+      strncpy(link7, link_buffer + (6*4), 3);
+      strncpy(link8, link_buffer + (7*4), 3);
+      strncpy(link9, link_buffer + (8*4), 3);
+      
+      link_array[0] = link1;
+      link_array[1] = link2;
+      link_array[2] = link3;
+      link_array[3] = link4;
+      link_array[4] = link5;
+      
+      builIndexPage(data_buffer);
+  }else{
+     buildDetailPage(data_buffer);
+  }
 }
 
 static void inbox_dropped_callback(AppMessageResult reason, void *context) {
@@ -213,7 +218,6 @@ static void outbox_sent_callback(DictionaryIterator *iterator, void *context) {
 void up_single_click_handler(ClickRecognizerRef recognizer, void *context) {
   layer_set_hidden((Layer *)s_text_layer_detail, true);
   s_selectedLine--;
-  
   if(s_selectedLine < 1){
     s_selectedLine = 9;
   }
@@ -264,7 +268,6 @@ static void main_window_load(Window *window){
   s_text_layer9 = text_layer_create(GRect(5, 145, (bounds.size.w-6), 15));
   s_text_layer_detail = text_layer_create(GRect(5, 25, (bounds.size.w-6), (bounds.size.h-10)));
 
-
   text_layer_set_background_color(s_text_layer1, g_def_bg);
   text_layer_set_text_color(s_text_layer1, g_def_txt);
   text_layer_set_background_color(s_text_layer2, g_def_bg);
@@ -306,6 +309,8 @@ static void main_window_load(Window *window){
   layer_add_child(window_get_root_layer(window), text_layer_get_layer(s_text_layer7));
   layer_add_child(window_get_root_layer(window), text_layer_get_layer(s_text_layer8));
   layer_add_child(window_get_root_layer(window), text_layer_get_layer(s_text_layer9));
+  
+  layer_add_child(window_get_root_layer(window), text_layer_get_layer(s_text_layer_detail));
   
   layer_set_hidden((Layer *)s_text_layer_detail, true);
 }
