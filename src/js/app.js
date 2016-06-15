@@ -13,18 +13,14 @@ function parsePageData(data){
   var contentArr = data.content.split(contentSplit);
   var textData = '';
   var linkData = '';
-//  var y;
   var raw;
- // var e;
-  
   var regex = /(<([^>]+)>)/ig;
   
   console.log('Andd now: the news...' + contentArr.length);
   for (var i = 1; i < contentArr.length; i++) { //first index contains markup
     raw = contentArr[i].replace(regex, "");
    
-    raw = HtmlDecode(raw);
-    
+    raw = cleanUpSpecialChars(raw);
     console.log("raw:" + raw);
     textData = textData + raw.substr(0,35) + " ";
     if(i<9){
@@ -88,6 +84,20 @@ Pebble.addEventListener('appmessage',
     getPage(dict[2]);
   }                     
 );
+
+function cleanUpSpecialChars(str){
+  str = str.replace(/[ÀÁÂÃÄÅ]/g,"A");
+  str = str.replace(/[àáâãäå]/g,"a");
+  str = str.replace(/[ÈÉÊË]/g,"E");
+  str = str.replace(/[èéêë]/g,"e");
+  str = str.replace(/[ÌÍÎÏ]/g,"I");
+  str = str.replace(/[ìíîï]/g,"i");
+  str = str.replace(/[ÒÓÔÖ]/g,"O");
+  str = str.replace(/[òóôö]/g,"o");
+  str = str.replace(/[ÙÚÛÜ]/g,"U");
+  str = str.replace(/[ùúûü]/g,"u");
+  return str; // final clean up
+}
 
 function HtmlDecode(s) {
  return s.replace(/&[a-z]+;/gi, function(entity) {
